@@ -17,6 +17,7 @@ const LocalStrategy = require("passport-local")//after installing it, a better n
 const User = require("./models/user")
 const helmet = require("helmet")
 const { MongoStore } = require('connect-mongo');
+const port = process.env.PORT || 3000;
 
 const campgroundRoutes = require("./routes/campgrouds")
 const reviewRoutes = require("./routes/reviews")
@@ -26,8 +27,7 @@ const { name } = require("ejs");
 const app = express()
 app.set('query parser', 'extended');
 
-const dbURL = "mongodb://127.0.0.1:27017/yelp-camp-maptiler-demo"
-// process.env.DB_URL
+const dbURL = process.env.DB_URL
 mongoose.connect(dbURL)
 
 const db = mongoose.connection;
@@ -172,11 +172,12 @@ app.use((err, req, res, next) => {
     res.status(status).render("error", { err })
 })
 
-app.listen(3000, () => {
-    console.log("serving at port 3000!!!")
-})
+app.listen(port, () => {
+  console.log(`Serving on port ${port}`);
+});
 
-
+// 74.220.49.0/24
+// 74.220.57.0/24
 
 // week 16:
 // Still on the yelpcamp app, I refactored the code to campground controller so as clean up campground routes even further, also added reviews controller, and further cleaned it up by grouping routes with same path but different verbs using router.route
