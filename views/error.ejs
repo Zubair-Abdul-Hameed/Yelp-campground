@@ -1,0 +1,11 @@
+<% layout('layouts/boilerplate')%>
+<div class="row"> <!-- Bootstrap grid system, first define row, which can be divided in 12units -->
+    <div class="col-10 offset-1"> <!-- col-6 means 6 units wide, offset-3 means 3 units of space on left side -->
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading"><%= err.message %></h4>
+            <% if(process.env.NODE_ENV !== "production") { %>
+                <p><%= err.stack %></p>
+            <% } %>
+        </div>
+    </div>
+</div>
