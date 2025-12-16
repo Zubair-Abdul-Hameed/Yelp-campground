@@ -17,7 +17,6 @@ const LocalStrategy = require("passport-local")//after installing it, a better n
 const User = require("./models/user")
 const helmet = require("helmet")
 const { MongoStore } = require('connect-mongo');
-const port = process.env.PORT || 3000;
 
 const campgroundRoutes = require("./routes/campgrouds")
 const reviewRoutes = require("./routes/reviews")
@@ -27,7 +26,7 @@ const { name } = require("ejs");
 const app = express()
 app.set('query parser', 'extended');
 
-const dbURL = process.env.DB_URL
+const dbURL = process.env.DB_URL || "mongodb://127.0.0.1:27017/yelp-camp-maptiler-demo"
 mongoose.connect(dbURL)
 
 const db = mongoose.connection;
@@ -43,11 +42,13 @@ app.engine('ejs', ejsMate);//tells express to use ejs-mate for all ejs files
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'));
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
 // using mongo to store session
 const store = MongoStore.create({
     mongoUrl: dbURL,
     crypto: {
-        secret: 'thisshouldbeabettersecret'
+        secret
     },
     touchAfter: 24 * 3600
 });
@@ -60,7 +61,7 @@ store.on("error", function(e) {
 const sessionConfig = {
     // name: "session",
     store,
-    secret: "thisshouldbeabettersecret",
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -171,6 +172,8 @@ app.use((err, req, res, next) => {
     if (!err.message) err.message = 'Oh No, Something Went Wrong!'
     res.status(status).render("error", { err })
 })
+
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Serving on port ${port}`);
